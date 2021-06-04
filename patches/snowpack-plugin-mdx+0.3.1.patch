@@ -1,0 +1,22 @@
+diff --git a/node_modules/snowpack-plugin-mdx/dist/main/index.js b/node_modules/snowpack-plugin-mdx/dist/main/index.js
+index 1b877c4..55755f5 100644
+--- a/node_modules/snowpack-plugin-mdx/dist/main/index.js
++++ b/node_modules/snowpack-plugin-mdx/dist/main/index.js
+@@ -30,7 +30,7 @@ module.exports = function plugin(_, pluginOptions) {
+     name: 'snowpack-plugin-mdx',
+     resolve: {
+       input: ['.md', '.mdx'],
+-      output: ['.js']
++      output: ['.mdx.js']
+     },
+ 
+     async load({
+@@ -55,7 +55,7 @@ module.exports = function plugin(_, pluginOptions) {
+         code: transpiled
+       } = (await babel.transformAsync(code, transformOptions)) || {};
+       return {
+-        '.js': transpiled
++        '.mdx.js': transpiled
+       };
+     }
+ 

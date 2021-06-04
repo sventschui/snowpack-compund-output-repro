@@ -11,13 +11,18 @@
     "react-dom": "^17.0.2"
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.13.13",
+    "@mdx-js/mdx": "^1.6.22",
+    "@mdx-js/react": "^1.6.22",
     "@snowpack/plugin-dotenv": "^2.1.0",
     "@snowpack/plugin-react-refresh": "^2.5.0",
     "@snowpack/web-test-runner-plugin": "^0.2.2",
     "@testing-library/react": "^11.2.6",
     "@web/test-runner": "^0.13.3",
     "chai": "^4.3.4",
+    "patch-package": "^6.4.7",
     "prettier": "^2.2.1",
-    "snowpack": "^3.3.7"
+    "snowpack": "^3.3.7",
+    "snowpack-plugin-mdx": "^0.3.1"
   }
 }

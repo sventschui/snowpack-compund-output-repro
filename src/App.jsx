@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import MDX from  './App.mdx';
+
+console.log({MDX})
 
 function App() {
   // Create the count state.
@@ -31,6 +34,7 @@ function App() {
             Learn React
           </a>
         </p>
+        <MDX />
       </header>
     </div>
   );

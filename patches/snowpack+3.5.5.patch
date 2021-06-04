@@ -1,0 +1,92 @@
+diff --git a/node_modules/snowpack/lib/index.js b/node_modules/snowpack/lib/index.js
+index e964cad..8ccdf3b 100644
+--- a/node_modules/snowpack/lib/index.js
++++ b/node_modules/snowpack/lib/index.js
+@@ -114723,13 +114723,13 @@ async function transformCssImports(code, replaceImport) {
+     return rewrittenCode;
+ }
+ async function transformFileImports({ type, contents }, replaceImport) {
+-    if (type === '.js') {
++    if (type.endsWith('.js')) {
+         return transformEsmImports(contents, replaceImport);
+     }
+-    if (type === '.html') {
++    if (type.endsWith('.html')) {
+         return transformHtmlImports(contents, replaceImport);
+     }
+-    if (type === '.css') {
++    if (type.endsWith('.css')) {
+         return transformCssImports(contents, replaceImport);
+     }
+     throw new Error(`Incompatible filetype: cannot scan ${type} files for ESM imports. This is most likely an error within Snowpack.`);
+@@ -122779,7 +122779,7 @@ async function installPackages({ config, isDev, isSSR, installOptions, installTa
+                         });
+                         let jsResponse;
+                         for (const [outputType, outputContents] of Object.entries(output)) {
+-                            if (outputContents && outputType === '.js') {
++                            if (outputContents && outputType.endsWith('.js')) {
+                                 jsResponse = outputContents;
+                             }
+                         }
+@@ -123053,7 +123053,7 @@ class PackageSourceLocal {
+         let packageCode = await fs_1.promises.readFile(loc, 'utf8');
+         const imports = [];
+         const type = path_1.default.extname(loc);
+-        if (!(type === '.js' || type === '.html' || type === '.css')) {
++        if (!(type.endsWith('.js') || type.endsWith('.html') || type.endsWith('.css'))) {
+             return { contents: packageCode, imports };
+         }
+         const packageImportMap = JSON.parse(await fs_1.promises.readFile(path_1.default.join(installDest, 'import-map.json'), 'utf8'));
+@@ -163226,7 +163226,7 @@ class FileBuilder {
+     }
+     verifyRequestFromBuild(type) {
+         const possibleExtensions = this.urls.map((url) => path_1.default.extname(url));
+-        if (!possibleExtensions.includes(type))
++        if (!this.resolvedOutput[type] || !Object.keys(this.resolvedOutput).length)
+             throw new Error(`${this.loc} - Requested content "${type}" but only built ${possibleExtensions.join(', ')}`);
+         return this.resolvedOutput[type];
+     }
+@@ -163240,14 +163240,14 @@ class FileBuilder {
+         const pkgSource = util$o.getPackageSource(this.config);
+         const resolvedImports = [];
+         for (const [type, outputResult] of Object.entries(this.buildOutput)) {
+-            if (!(type === '.js' || type === '.html' || type === '.css')) {
++            if (!(type.endsWith('.js') || type.endsWith('.html') || type.endsWith('.css'))) {
+                 continue;
+             }
+             let contents = typeof outputResult.code === 'string'
+                 ? outputResult.code
+                 : outputResult.code.toString('utf8');
+             // Handle attached CSS.
+-            if (type === '.js' && this.buildOutput['.css']) {
++            if (type.endsWith('.js') && this.buildOutput['.css']) {
+                 const relativeCssImport = `./${util$b.replaceExtension(path_1.default.posix.basename(this.urls[0]), '.js', '.css')}`;
+                 contents = `import '${relativeCssImport}';\n` + contents;
+             }
+@@ -163329,7 +163329,7 @@ class FileBuilder {
+             // This is a hack since we can't currently scan "script" `src=` tags as imports.
+             // Either move these to inline JavaScript in the script body, or add support for
+             // `script.src=` and `link.href` scanning & resolving in transformFileImports().
+-            if (type === '.html' && this.isHMR) {
++            if (type.endsWith('.html') && this.isHMR) {
+                 if (contents.includes(buildImportProxy.SRI_CLIENT_HMR_SNOWPACK)) {
+                     resolvedImports.push(util$b.createInstallTarget(buildImportProxy.getMetaUrlPath('hmr-client.js', this.config)));
+                 }
+@@ -163337,7 +163337,7 @@ class FileBuilder {
+                     resolvedImports.push(util$b.createInstallTarget(buildImportProxy.getMetaUrlPath('hmr-error-overlay.js', this.config)));
+                 }
+             }
+-            if (type === '.js' && hmrParam) {
++            if (type.endsWith('.js') && hmrParam) {
+                 contents = await rewriteImports.transformEsmImports(contents, (imp) => {
+                     var _a, _b;
+                     const importUrl = path_1.default.posix.resolve(urlPathDirectory, imp);
+@@ -163349,7 +163349,7 @@ class FileBuilder {
+                     return imp;
+                 });
+             }
+-            if (type === '.js') {
++            if (type.endsWith('.js')) {
+                 const isHmrEnabled = contents.includes('import.meta.hot');
+                 const rawImports = await rewriteImports.scanCodeImportsExports(contents);
+                 const resolvedImports = rawImports.map((imp) => {
